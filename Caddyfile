@@ -1,0 +1,13 @@
+{$DOMAIN} {
+    # Limit the complete HTTP body; app separately enforces a 32 MiB file limit.
+    request_body {
+        max_size 34MB
+    }
+
+    # All pages, uploads, audio, API endpoints, and exports share this login.
+    basic_auth {
+        {$BASIC_AUTH_USER} {$BASIC_AUTH_HASH}
+    }
+
+    reverse_proxy app:8000
+}

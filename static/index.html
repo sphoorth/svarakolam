@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#202c2b">
+  <title>SvaraKolam · A melody, an unbroken line</title>
+  <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="masthead"><a href="/" class="brand"><span class="brand-mark" aria-hidden="true">⌘</span> SvaraKolam<span class="brand-sub">THE MUSIC–PATTERN STUDIO</span></a><div class="local-tag"><span></span> LOCAL STUDIO <b>01</b></div></header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">SOUND INTO SACRED GEOMETRY</p><h1>A melody. <em>One unbroken line.</em></h1><p class="lede">Let the contours of Carnatic music unfold into a single-line kolam.</p></div><div class="intro-note">A meeting of swara &amp; sikku.<br>Planned as one loop. Drawn in time.</div></section>
+    <div class="workspace">
+      <aside class="controls" aria-label="Studio controls">
+        <section class="control-section"><div class="section-heading"><span class="step">01</span><h2>Your recording</h2></div>
+          <label class="dropzone" id="dropzone" for="file"><span class="upload-symbol" aria-hidden="true">↥</span><strong id="fileLabel">Bring a melody</strong><span>Drop audio here or browse files</span><small>WAV · MP3 · FLAC · OGG<br>30–60 seconds · up to 32 MB</small><input id="file" type="file" accept=".wav,.mp3,.flac,.ogg" aria-label="Upload a 30 to 60 second audio recording"></label>
+          <p class="field-note">A clear solo flute, violin, veena, or voice works best.</p>
+          <label class="field-label" for="tracker">Pitch tracker</label><select id="tracker"><option value="auto">Automatic · GPU if available</option><option value="pyin">pYIN · CPU</option><option value="crepe">CREPE · GPU, with pYIN fallback</option></select>
+        </section>
+        <section class="control-section"><div class="section-heading"><span class="step">02</span><h2>Pulli geometry</h2></div>
+          <fieldset class="grid-picker"><legend class="field-label">Dot arrangement</legend><label><input type="radio" name="grid" value="ner" checked><span><b aria-hidden="true">⠿</b>Ner Pulli<small>Square</small></span></label><label><input type="radio" name="grid" value="idukku"><span><b aria-hidden="true">⠪</b>Idukku Pulli<small>Diamond</small></span></label></fieldset>
+          <label class="field-label" for="size">Grid size <output id="sizeValue">7 × 7</output></label><input id="size" type="range" min="2" max="15" value="7"><div class="range-labels"><span>2 · intimate</span><span>15 · intricate</span></div>
+          <p class="field-note">Changes redraw the structure using your existing audio analysis.</p>
+        </section>
+        <details class="control-section advanced-settings" id="advancedSettings">
+          <summary>Advanced settings</summary>
+          <label class="field-label" for="mela">Melakarta <span>notation context</span></label><select id="mela"></select>
+          <div class="field-row"><div><label class="field-label" for="tonic">Sa / tonic <span>Hz</span></label><input id="tonic" type="number" min="55" max="1000" step="0.1" placeholder="Automatic"></div><button id="autoTonic" class="small-button" type="button" title="Use the estimated tonic">Auto Sa</button></div>
+          <p id="tonicNote" class="field-note">Pitch-density estimate; adjust Sa by ear.</p>
+          <label class="field-label" for="tala">Tala cycle <span>pulse grouping</span></label><select id="tala"><option value="8">Adi · 8 pulses</option><option value="3">Tisra · 3 pulses</option><option value="4">Chatusra · 4 pulses</option><option value="5">Khanda · 5 pulses</option><option value="7">Misra · 7 pulses</option><option value="9">Sankirna · 9 pulses</option></select>
+          <p class="field-note">Beat pulse is estimated; cycle alignment begins at the first detected beat.</p>
+        </details>
+      </aside>
+      <section class="studio" aria-label="Kolam drawing and playback">
+        <div class="stage-header"><div><span class="live-dot"></span><span id="stageLabel">STRUCTURAL PREVIEW</span></div><span id="loopBadge" class="loop-badge">ONE CLOSED LOOP</span></div>
+        <div class="stage" id="stage"><canvas id="kolam" aria-label="Animated continuous kolam around gold pulli dots"></canvas><div class="stage-caption"><span id="gridCaption">NER PULLI / 49 DOTS</span><span id="drawPercent">PREVIEW</span></div><div class="empty-hint" id="emptyHint">Your melody sets the line in motion<span>Upload a recording to begin</span></div></div>
+        <div class="hud"><div class="hud-note"><span class="hud-label">LIVE SWARA</span><strong id="swara">—</strong><span id="frequency">awaiting a melody</span></div><div class="hud-tala"><span class="hud-label">TALA PULSE <b id="beatText">— / 8</b></span><div id="pulses" aria-label="Tala cycle pulses"></div><span class="hud-foot" id="tempo">Pulse estimated from audio</span></div><div class="hud-gamaka"><span class="hud-label">GAMAKA</span><div class="gamaka-track"><i id="gamakaBar"></i></div><span id="gamakaText">Pitch movement · cents σ</span></div></div>
+        <div class="transport"><div class="wave-wrap"><canvas id="waveform" aria-label="Audio amplitude with onset and beat markers"></canvas><div id="playhead"></div><input id="seek" type="range" min="0" max="1000" value="0" aria-label="Seek in recording" disabled></div><div class="transport-row"><button id="play" class="play-button" type="button" disabled aria-label="Play recording">▶</button><button id="restart" class="icon-button" type="button" disabled aria-label="Restart recording">↶</button><span id="time">0:00 <i>/ 0:00</i></span><span class="transport-help">SPACE TO PLAY / PAUSE</span><span class="thread-label">∞ <span>A SINGLE THREAD</span></span></div><audio id="audio" preload="metadata"></audio></div>
+        <div class="status" id="status" role="status" aria-live="polite"><span id="statusText">Ready for your recording. Audio stays on this machine.</span><progress id="jobProgress" max="1" value="0" hidden></progress></div>
+        <div class="export-row"><div><span class="eyebrow">KEEP THE PATTERN</span><p>A moment in music, made tangible.</p></div><div class="export-buttons"><button id="svg" class="button secondary" type="button" disabled>↓ <span>Export SVG</span></button><button id="mp4" class="button primary" type="button" disabled>↗ <span>Export video + audio</span></button></div></div>
+        <details class="analysis-details"><summary>Analysis &amp; method notes</summary><p id="analysisDetails">The structural preview is a single closed circuit. Upload audio to extract notes, pitch motion, and beat pulse. This studio uses the selected Melakarta for notation; it does not identify a raga or infer tala from the recording.</p><button type="button" class="text-button" id="deleteAudio" disabled>Delete this audio session</button></details>
+      </section>
+    </div>
+    <footer><span>SVARAKOLAM <i>·</i> WHERE MELODY LEAVES A TRACE</span><span>One circuit. Countless expressions.</span></footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,31 @@
+name: svarakolam
+services:
+  app:
+    build: .
+    image: svarakolam:local
+    restart: unless-stopped
+    # Only the local machine can reach this port. Public access goes via Caddy.
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - audio_data:/data
+    init: true
+    stop_grace_period: 5m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3).read()"]
+      interval: 30s
+      timeout: 5s
+      start_period: 120s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  audio_data:
